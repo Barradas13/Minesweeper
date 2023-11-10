@@ -26,9 +26,7 @@ public class Main {
                 tabuleiro.colocandoValores(x, y, estourar);
                 tabuleiro.imprimindoMatrix();
             }catch(StackOverflowError e){
-                for(int i = 0; i < tabuleiro.ja_foram.size(); i ++){
-                    System.out.println(Arrays.toString(tabuleiro.ja_foram.get(i)));
-                }
+               
             };
             
         }

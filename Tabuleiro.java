@@ -4,11 +4,11 @@ import java.util.ArrayList;
 public class Tabuleiro {
     final static Random random = new Random();
 
-    int dificuldade, qtd_bomb, tamanho;
+    int dificuldade, qtd_bomb, tamanho, casas_explodidas;
     String[][] matrix_vizualizar;
     int[][] matrix_bombas;
     boolean explodiu;
-    ArrayList<int[]> ja_foram;
+    boolean venceu;
 
     public Tabuleiro(int dificuldade){
         if(dificuldade == 1){
@@ -22,10 +22,10 @@ public class Tabuleiro {
             this.qtd_bomb = 99;
         }
 
+        this.casas_explodidas = 0;
         this.matrix_bombas = construindoMatrix();
         this.matrix_vizualizar = new String[this.tamanho][this.tamanho];
         this.explodiu = false;
-        this.ja_foram = new ArrayList<>();
     }
 
     public int[][] construindoMatrix(){
@@ -105,6 +105,7 @@ public class Tabuleiro {
                     if(!matrix_vizualizar[x_verificar][y_verificar].equals("p")){
                         if(matrix_bombas[x_verificar][y_verificar] != -1){
                             this.matrix_vizualizar[x_verificar][y_verificar] = "" + this.matrix_bombas[x_verificar][y_verificar];
+                            this.casas_explodidas ++;
                         }else{
                             this.explodiu = true;
                             this.matrix_vizualizar[x_verificar][y_verificar] = "(!)";
@@ -112,21 +113,13 @@ public class Tabuleiro {
                     }
                 }else if(matrix_bombas[x_verificar][y_verificar] != -1){
                     this.matrix_vizualizar[x_verificar][y_verificar] = "" + this.matrix_bombas[x_verificar][y_verificar];
+                    this.casas_explodidas ++;
                 }else if(matrix_bombas[x_verificar][y_verificar] == -1){
                     this.explodiu = true;
                     this.matrix_vizualizar[x_verificar][y_verificar] = "(!)";
                 }
                 
-                int[] l1 = {x, y};
 
-                if(! this.ja_foram.contains(l1) && matrix_bombas[x_verificar][y_verificar] == 0){
-                    this.matrix_vizualizar[x_verificar][y_verificar] = "" + this.matrix_bombas[x_verificar][y_verificar];
-                    estorandoRedores(x_verificar, y_verificar);
-                }
-                
-                if(!this.ja_foram.contains(l1)){
-                    this.ja_foram.add(l1.clone());
-                }
 
             }catch(IndexOutOfBoundsException e){}   
         }
@@ -138,16 +131,12 @@ public class Tabuleiro {
             if (matrix_bombas[x][y] != -1) {
                 
     
-                int[] l1 = {x, y};
-                if(!this.ja_foram.contains(l1)){
-                    this.ja_foram.add(l1.clone());
-                }
                 if(matrix_bombas[x][y] == 0){
                     estorandoRedores(x, y);
                 }
                 this.matrix_vizualizar[x][y] = "" + matrix_bombas[x][y];
-                
-                
+                this.casas_explodidas ++;
+
             }else{
                 this.explodiu = true;
                 this.matrix_vizualizar[x][y] = "(!)";
