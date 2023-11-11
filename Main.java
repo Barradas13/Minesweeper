@@ -26,12 +26,11 @@ public class Main {
                 tabuleiro.colocandoValores(x, y, estourar);
                 tabuleiro.imprimindoMatrix();
             }catch(StackOverflowError e){
-               
+                System.out.println("erro " + e);
+                System.out.println(tabuleiro.ja_foram.size());
             };
             
         }
-
         System.out.println("estourou");
-
     }
 }

@@ -9,6 +9,7 @@ public class Tabuleiro {
     int[][] matrix_bombas;
     boolean explodiu;
     boolean venceu;
+    ArrayList<int[]> ja_foram = new ArrayList<>(); 
 
     public Tabuleiro(int dificuldade){
         if(dificuldade == 1){
@@ -56,6 +57,9 @@ public class Tabuleiro {
     }
 
     public void imprimindoMatrix(){
+        if(this.casas_explodidas >= this.tamanho * this.tamanho - this.qtd_bomb){
+            this.venceu = true;
+        }
         System.out.print("   ");
         for(int i = 0; i < this.matrix_vizualizar.length; i ++){
             System.out.print(i + " ");
@@ -95,11 +99,15 @@ public class Tabuleiro {
 
     public void estorandoRedores(int x, int y){
         int[][] coordenadasRedor = {{-1, 1}, {0, 1}, {1, 1}, {-1, 0}, {1, 0}, {-1, -1}, {0, -1}, {1, -1}};
+        int[] yx = {x, y}; 
+        ja_foram.add(yx);
 
         for(int i = 0; i < coordenadasRedor.length; i ++){
             try{
                 int x_verificar = coordenadasRedor[i][0] + x;
                 int y_verificar = coordenadasRedor[i][1] + y;
+
+                int[] xy = {x_verificar, y_verificar};
 
                 if(matrix_vizualizar[x_verificar][y_verificar] != null){
                     if(!matrix_vizualizar[x_verificar][y_verificar].equals("p")){
@@ -111,19 +119,29 @@ public class Tabuleiro {
                             this.matrix_vizualizar[x_verificar][y_verificar] = "(!)";
                         }
                     }
-                }else if(matrix_bombas[x_verificar][y_verificar] != -1){
+                }else if(matrix_bombas[x_verificar][y_verificar] != -1 && matrix_bombas[x_verificar][y_verificar] != 0){
                     this.matrix_vizualizar[x_verificar][y_verificar] = "" + this.matrix_bombas[x_verificar][y_verificar];
                     this.casas_explodidas ++;
                 }else if(matrix_bombas[x_verificar][y_verificar] == -1){
                     this.explodiu = true;
                     this.matrix_vizualizar[x_verificar][y_verificar] = "(!)";
+                }else if(matrix_bombas[x_verificar][y_verificar] == 0 && ! tem(ja_foram, xy)){
+                    this.matrix_vizualizar[x_verificar][y_verificar] = "0";
+                    estorandoRedores(x_verificar, y_verificar);
                 }
-                
-
 
             }catch(IndexOutOfBoundsException e){}   
         }
 
+    }
+
+    public boolean tem(ArrayList<int[]> lista, int[] valores){
+        for (int[] i : lista) {
+            if(i[0] == valores[0] && i[1] == valores[1]){
+                return true;
+            }
+        }
+        return false;
     }
 
     public void colocandoValores(int x, int y, boolean estourar){
